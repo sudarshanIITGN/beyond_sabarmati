@@ -88,32 +88,36 @@
 
     async function loadData() {
     const errorDiv = document.getElementById('errorMsg');
+    const statusText = document.querySelector('.header p'); // The "Connecting..." text
+    
     try {
-        // Clear previous errors
-        errorDiv.style.display = 'none';
-
+        console.log("Starting fetch from Netlify Function...");
         const response = await fetch('/.netlify/functions/get-questions');
         
-        // If the function itself fails (e.g., 500 error)
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Server Error: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Server responded with ${response.status}: ${errorText}`);
         }
 
         const data = await response.json();
-        
-        // Ensure data is an array before proceeding
-        if (Array.isArray(data)) {
-            rawData = data;
-            populateGenreFilter();
+        console.log("Data received from Function:", data);
+
+        // Neon sometimes returns { rows: [...] } and sometimes just [...]
+        // This line handles both cases safely
+        rawData = Array.isArray(data) ? data : (data.rows || []);
+
+        if (rawData.length === 0) {
+            statusText.innerText = "Database connected, but no questions found.";
         } else {
-            throw new Error("Received invalid data format from server.");
+            statusText.innerText = `Connected! Found ${rawData.length} questions.`;
+            populateGenreFilter();
         }
         
     } catch (error) {
-        console.error("Connection Debug:", error);
+        console.error("Frontend Error:", error);
+        statusText.innerText = "Connection failed.";
         errorDiv.style.display = 'block';
-        errorDiv.innerText = `Connection Error: ${error.message}`;
+        errorDiv.innerText = `Error: ${error.message}`;
     }
 }
 
@@ -192,4 +196,5 @@
 </body>
 
 </html>
+
 
