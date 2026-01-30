@@ -88,36 +88,29 @@
 
     async function loadData() {
     const errorDiv = document.getElementById('errorMsg');
-    const statusText = document.querySelector('.header p'); // The "Connecting..." text
-    
+    const headerP = document.querySelector('.header p');
+
     try {
-        console.log("Starting fetch from Netlify Function...");
         const response = await fetch('/.netlify/functions/get-questions');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Server responded with ${response.status}: ${errorText}`);
-        }
-
         const data = await response.json();
-        console.log("Data received from Function:", data);
-
-        // Neon sometimes returns { rows: [...] } and sometimes just [...]
-        // This line handles both cases safely
+        
+        // Handle both possible Neon response formats
         rawData = Array.isArray(data) ? data : (data.rows || []);
 
-        if (rawData.length === 0) {
-            statusText.innerText = "Database connected, but no questions found.";
-        } else {
-            statusText.innerText = `Connected! Found ${rawData.length} questions.`;
+        if (rawData.length > 0) {
+            headerP.innerText = `Connected! Database contains ${rawData.length} questions.`;
             populateGenreFilter();
+            // Automatically show all questions on load (Optional)
+            renderTable(rawData); 
+        } else {
+            headerP.innerText = "Connected to Neon, but the 'questions' table returned 0 rows.";
         }
-        
     } catch (error) {
-        console.error("Frontend Error:", error);
-        statusText.innerText = "Connection failed.";
+        console.error("Load Error:", error);
         errorDiv.style.display = 'block';
-        errorDiv.innerText = `Error: ${error.message}`;
+        errorDiv.innerText = "Connection Error: Check Netlify Logs for 'get-questions' function.";
     }
 }
 
@@ -196,5 +189,6 @@
 </body>
 
 </html>
+
 
 
