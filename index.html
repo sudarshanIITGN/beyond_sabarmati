@@ -89,19 +89,31 @@
     async function loadData() {
     const errorDiv = document.getElementById('errorMsg');
     try {
-        // Instead of talking to Neon (which requires a key), 
-        // we talk to our own Netlify function (which is a safe middleman).
+        // Clear previous errors
+        errorDiv.style.display = 'none';
+
         const response = await fetch('/.netlify/functions/get-questions');
         
-        if (!response.ok) throw new Error(`Function Error: ${response.status}`);
+        // If the function itself fails (e.g., 500 error)
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Server Error: ${response.status}`);
+        }
 
-        rawData = await response.json();
-        populateGenreFilter();
+        const data = await response.json();
+        
+        // Ensure data is an array before proceeding
+        if (Array.isArray(data)) {
+            rawData = data;
+            populateGenreFilter();
+        } else {
+            throw new Error("Received invalid data format from server.");
+        }
         
     } catch (error) {
-        console.error(error);
+        console.error("Connection Debug:", error);
         errorDiv.style.display = 'block';
-        errorDiv.innerText = "Connection Error: The backend is still waking up or configuring.";
+        errorDiv.innerText = `Connection Error: ${error.message}`;
     }
 }
 
@@ -180,3 +192,4 @@
 </body>
 
 </html>
+
