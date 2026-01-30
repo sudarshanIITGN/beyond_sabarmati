@@ -3,6 +3,19 @@ exports.handler = async (event, context) => {
   const NEON_URL = process.env.NEON_DATA_API_URL;
   const NEON_KEY = process.env.NEON_API_KEY;
 
+  // Handle "Preflight" requests (Browsers do this for security)
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      },
+      body: "",
+    };
+  }
+
   try {
     const response = await fetch(`${NEON_URL}/sql`, {
       method: 'POST',
@@ -10,33 +23,24 @@ exports.handler = async (event, context) => {
           'Authorization': `Bearer ${NEON_KEY}`,
           'Content-Type': 'application/json'
       },
-      // The semicolon at the end of the query is a best practice in Postgres
       body: JSON.stringify({ query: "SELECT * FROM questions;" })
     });
 
-    const result = await response.json();
-
-    // If Neon returns an error (like a timeout or auth issue)
-    if (result.error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: result.error })
-        };
-    }
+    const data = await response.json();
 
     return {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*", // This tells the browser the data is safe
       },
-      // Return the rows array directly
-      body: JSON.stringify(result.rows || [])
+      body: JSON.stringify(data.rows || []),
     };
   } catch (error) {
     return { 
       statusCode: 500, 
-      body: JSON.stringify({ error: "The backend is currently unavailable." }) 
+      headers: { "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ error: error.message }) 
     };
   }
 };
