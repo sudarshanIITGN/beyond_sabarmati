@@ -45,6 +45,39 @@ td { padding: 20px 15px; border-bottom: 1px solid #f1f5f9; vertical-align: top; 
 .option-box { background: #f1f5f9; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0; }
 
 .status-msg { padding: 50px; text-align: center; font-size: 1.1rem; color: #64748b; }
+
+@media (max-width: 768px) {
+.controls {
+  grid-template-columns: 1fr;
+}
+
+table, thead, tbody, th, td, tr {
+ display: block;
+}
+
+thead {
+  display: none;
+}
+
+tr {
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+td {
+  padding: 10px;
+}
+
+.options-grid {
+  grid-template-columns: 1fr;
+}
+
+body {  padding: 10px;
+  }
+}
+.table-container {
+  overflow-x: auto;
+}
 </style>
 </head>
 
