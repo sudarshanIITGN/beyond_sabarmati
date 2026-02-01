@@ -1,9 +1,10 @@
 export default async function handler(req, res) {
-    const url = process.env.NEON_DATA_API_URL;
+    // This now contains the FULL URL ending in /sql
+    const fullUrl = process.env.NEON_DATA_API_URL;
     const key = process.env.NEON_API_KEY;
 
     try {
-        const response = await fetch(url, {
+        const response = await fetch(fullUrl, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${key.trim()}`,
@@ -15,12 +16,13 @@ export default async function handler(req, res) {
 
         const result = await response.json();
 
-        // LOGGING: This will show up in your Vercel logs so we can see what Neon is actually sending
-        console.log("Neon Raw Output:", JSON.stringify(result));
+        // Check if Neon returned a 404 or other error message
+        if (result.msg || result.message) {
+            return res.status(500).json({ error: result.msg || result.message });
+        }
 
-        // This handles every possible way Neon sends data back
+        // Return the rows
         const rows = result.rows || (Array.isArray(result) ? result : []);
-        
         return res.status(200).json(rows);
 
     } catch (err) {
