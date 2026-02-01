@@ -11,7 +11,7 @@ export default async function handler(request, response) {
           'Content-Type': 'application/json',
           'Neon-Database': 'neondb'
       },
-      body: JSON.stringify({ query: "SELECT * FROM questions;" })
+      body: JSON.stringify({ query: "SELECT * FROM public.questions;" })
     });
 
     const result = await res.json();
