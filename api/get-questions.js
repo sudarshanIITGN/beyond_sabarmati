@@ -15,13 +15,13 @@ export default async function handler(req, res) {
 
         const result = await response.json();
 
-        // If Neon sends back an error message (like the password one)
-        if (result.message) {
-            return res.status(500).json({ error: result.message });
-        }
+        // LOGGING: This will show up in your Vercel logs so we can see what Neon is actually sending
+        console.log("Neon Raw Output:", JSON.stringify(result));
 
-        // Send the rows back to your HTML
-        return res.status(200).json(result.rows || []);
+        // This handles every possible way Neon sends data back
+        const rows = result.rows || (Array.isArray(result) ? result : []);
+        
+        return res.status(200).json(rows);
 
     } catch (err) {
         return res.status(500).json({ error: err.message });
