@@ -1,25 +1,29 @@
 // api/get-questions.js
-export default async function handler(request, response) {
-  const NEON_FULL_URL = process.env.NEON_DATA_API_URL;
+export default async function handler(req, res) {
+  const NEON_REST_URL = process.env.NEON_DATA_API_URL;
   const NEON_KEY = process.env.NEON_API_KEY;
 
   try {
-    const res = await fetch(NEON_FULL_URL, {
-      method: 'POST',
-      headers: {
+    const response = await fetch(
+      `${NEON_REST_URL}/questions?select=*`,
+      {
+        method: 'GET',
+        headers: {
           'Authorization': `Bearer ${NEON_KEY}`,
-          'Content-Type': 'application/json',
-          'Neon-Database': 'neondb'
-      },
-      body: JSON.stringify({ query: "SELECT * FROM public.questions;" })
-    });
+          'apikey': NEON_KEY
+        }
+      }
+    );
 
-    const result = await res.json();
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text);
+    }
 
-    // Vercel uses response.status().json() syntax
-    return response.status(200).json(result.rows || []);
-    
+    const data = await response.json();
+    return res.status(200).json(data);
+
   } catch (error) {
-    return response.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
