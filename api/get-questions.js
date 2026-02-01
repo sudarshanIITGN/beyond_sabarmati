@@ -1,14 +1,15 @@
-// api/get-questions.js
 export default async function handler(req, res) {
-  const NEON_SQL_URL = process.env.NEON_DATA_API_URL; // must end with /sql
+  const NEON_SQL_URL = process.env.NEON_DATA_API_URL;
   const NEON_KEY = process.env.NEON_API_KEY;
+  const NEON_CONN = process.env.NEON_CONNECTION_STRING;
 
   try {
     const response = await fetch(NEON_SQL_URL, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${NEON_KEY}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "neon-connection-string": NEON_CONN
       },
       body: JSON.stringify({
         query: "SELECT * FROM public.questions;"
