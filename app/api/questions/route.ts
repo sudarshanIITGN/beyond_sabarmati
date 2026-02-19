@@ -1,28 +1,75 @@
-import { neon } from "@neondatabase/serverless";
+import { NextResponse } from "next/server";
+import { Pool } from "pg";
 
-export async function GET() {
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
+
+export async function GET(req: Request) {
   try {
-    const sql = neon(process.env.DATABASE_URL!);
+    const { searchParams } = new URL(req.url);
 
-    const questions = await sql`
-      SELECT
-        question_id,
-        genre,
-        context,
-        question_text,
-        options
+    const unit = searchParams.get("unit");
+    const year = searchParams.get("year");
+
+    // HARD GATE: no unit or year → no questions
+    if (!unit || !year) {
+      return NextResponse.json({
+        questions: [],
+        page: 1,
+        limit: 25,
+        total: 0,
+        totalPages: 0,
+      });
+    }
+
+    const page = Math.max(parseInt(searchParams.get("page") || "1", 10), 1);
+    const limit = Math.max(parseInt(searchParams.get("limit") || "25", 10), 1);
+    const offset = (page - 1) * limit;
+
+    /* ===================== 1️⃣ COUNT ===================== */
+    const countResult = await pool.query(
+      `
+      SELECT COUNT(*)
       FROM questions
-      ORDER BY question_id;
-    `;
+      WHERE unit = $1 AND year = $2
+      `,
+      [unit, year]
+    );
 
-    return new Response(JSON.stringify(questions), {
-      headers: { "Content-Type": "application/json" },
+    const total = parseInt(countResult.rows[0].count, 10);
+    const totalPages = Math.ceil(total / limit);
+
+    /* ===================== 2️⃣ DATA (WITH CONTEXT JOIN) ===================== */
+    const dataResult = await pool.query(
+      `
+      SELECT
+        q.*,
+        c.context_type,
+        c.content AS context_content
+      FROM questions q
+      LEFT JOIN contexts c
+        ON q.context_id = c.context_id
+      WHERE q.unit = $1
+        AND q.year = $2
+      ORDER BY q.question_id DESC
+      LIMIT $3 OFFSET $4
+      `,
+      [unit, year, limit, offset]
+    );
+
+    return NextResponse.json({
+      questions: dataResult.rows,
+      page,
+      limit,
+      total,
+      totalPages,
     });
   } catch (error) {
-    console.error("Failed to fetch questions:", error);
-
-    return new Response(
-      JSON.stringify({ error: "Failed to fetch questions" }),
+    console.error("API /questions error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch questions" },
       { status: 500 }
     );
   }
