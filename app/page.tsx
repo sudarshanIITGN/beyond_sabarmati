@@ -199,9 +199,26 @@ export default function Home() {
         <h1>bubbles at sabarmati</h1>
         <p style={{ marginBottom: "15px" }}>an UGC NET paper-I pyq database + practice area</p>
 
-        <button onClick={toggleTheme} className="theme-toggle-btn">
-          {theme === "light" ? "🌙" : "☀️"}
-        </button>
+        {/* --- ADDED: Flex container for the toggle button and the PDF link --- */}
+        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <button onClick={toggleTheme} className="theme-toggle-btn">
+            {theme === "light" ? "🌙" : "☀️"}
+          </button>
+          
+          <a 
+            href="/important-info.pdf" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ 
+              color: "var(--primary)", 
+              fontWeight: "600", 
+              textDecoration: "underline",
+              textUnderlineOffset: "4px"
+            }}
+          >
+            Read me! Important!!
+          </a>
+        </div>
       </div>
 
       <div className="controls">
@@ -240,7 +257,6 @@ export default function Home() {
             <table>
               <thead>
                 <tr>
-                  {/* CHANGED: Only 2 Columns Now */}
                   <th>Details</th>
                   <th>Question</th>
                 </tr>

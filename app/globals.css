@@ -5,38 +5,25 @@
 :root {
   /* ------------------- LIGHT MODE: "ACADEMIC CREAM" ------------------- */
   
-  /* CORE LAYOUT COLORS */
-  /* Replaced harsh white/gray with a warm, paper-like cream */
   --bg: #F6F4F1;           
-  
-  /* Pure white cards to stand out against the cream background */
   --surface: #FFFFFF;      
-  
-  /* Headers/Boxes: A warm grey, distinct from the cream bg */
   --surface-highlight: #F3F4F6; 
-  
-  /* Borders: Soft warm gray */
   --border: #E5E7EB;       
   
-  /* TYPOGRAPHY */
-  /* Charcoal (not black) reduces eye strain on light monitors */
   --text: #1F2937;         
   --text-muted: #6B7280;   
   
-  /* BRANDING */
-  --primary: #2563eb;      /* Academic Royal Blue */
+  --primary: #2563eb;      
 
-  /* BADGES (Pastel Tones) */
-  --badge-id-bg: #EFF6FF;      /* Light Blue */
-  --badge-id-text: #1D4ED8;    /* Dark Blue Text */
+  --badge-id-bg: #EFF6FF;      
+  --badge-id-text: #1D4ED8;    
   
-  --badge-genre-bg: #FEF3C7;   /* Light Amber */
-  --badge-genre-text: #92400E; /* Dark Amber Text */
+  --badge-genre-bg: #FEF3C7;   
+  --badge-genre-text: #92400E; 
   
-  --badge-year-bg: #E0E7FF;    /* Light Indigo */
-  --badge-year-text: #3730A3;  /* Dark Indigo Text */
+  --badge-year-bg: #E0E7FF;    
+  --badge-year-text: #3730A3;  
 
-  /* ALERTS */
   --success-bg: #DCFCE7;
   --success-border: #22C55E;
   --error-bg: #FEE2E2;
@@ -46,39 +33,25 @@
 [data-theme="dark"] {
   /* ------------------- DARK MODE: "DESATURATED CARBON" ------------------- */
   
-  /* CORE LAYOUT COLORS */
-  /* Removed the "Moody Blue" tint. Now a neutral, deep graphite. */
   --bg: #09090B;           
-  
-  /* Cards are slightly lighter graphite, no blue undertones. */
   --surface: #18181B;      
-  
-  /* Headers/Boxes: Dark Zinc */
   --surface-highlight: #27272A; 
-  
-  /* Borders: Subtle dark grey */
   --border: #27272A;       
   
-  /* TYPOGRAPHY */
-  /* Off-white (not pure white) prevents "halos" in dark mode */
   --text: #E4E4E7;         
   --text-muted: #A1A1AA;   
 
-  /* BRANDING */
-  /* Lighter blue to be legible on dark backgrounds */
   --primary: #60A5FA;      
 
-  /* BADGES (Deep/Muted Tones) */
-  --badge-id-bg: #172554;      /* Deep Navy */
-  --badge-id-text: #BFDBFE;    /* Light Blue Text */
+  --badge-id-bg: #172554;      
+  --badge-id-text: #BFDBFE;    
   
-  --badge-genre-bg: #6a2e0ecf;   /* Deep Brown */
-  --badge-genre-text: #FDE68A; /* Light Gold Text */
+  --badge-genre-bg: #6a2e0ecf;   
+  --badge-genre-text: #FDE68A; 
   
-  --badge-year-bg: #312E81;    /* Deep Indigo */
-  --badge-year-text: #C7D2FE;  /* Light Indigo Text */
+  --badge-year-bg: #312E81;    
+  --badge-year-text: #C7D2FE;  
 
-  /* ALERTS (Dimmed for dark mode) */
   --success-bg: #0a4021c8;
   --success-border: #15803D;
   --error-bg: #5d1515c0;
@@ -102,7 +75,6 @@ body {
   padding: 0;
   font-family: "Segoe UI", system-ui, sans-serif;
   
-  /* Applies the theme background color */
   background: var(--bg);
   color: var(--text);
   
@@ -120,81 +92,57 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 500px; /* Bubbles only exist in the top header area */
+  height: 500px; 
   overflow: hidden;
   pointer-events: none; 
   z-index: 0;
 }
 
-/* --- THE BUBBLE BASE (Applies to Light Mode) --- */
 .bubble {
   position: absolute;
   border-radius: 50%;
   
-  /* LIGHT MODE VISIBILITY FIX: 
-     We added a subtle drop-shadow so the bubble pops against the cream bg. 
-  */
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.07));
   
-  /* GLASS MATERIAL: 
-     1. Sharp white reflection (Glint)
-     2. Mostly transparent body (to see the cream bg behind it)
-  */
   background: 
     radial-gradient(
       100% 100% at 30% 30%, 
-      rgba(255, 255, 255, 0.9) 0%,   /* Sharp Glint */
-      rgba(255, 255, 255, 0.1) 25%,  /* Faint white body */
-      transparent 45%                /* Completely clear edge */
+      rgba(255, 255, 255, 0.9) 0%,   
+      rgba(255, 255, 255, 0.1) 25%,  
+      transparent 45%                
     );
 
-  /* RIM: A thin, crisp white ring */
   border: 1px solid rgba(255, 255, 255, 0.6);
   
-  /* IRIDESCENCE: Subtle hints of pink/blue inside the glass */
   box-shadow: 
     inset 0 0 20px rgba(255, 255, 255, 0.5),
-    inset 10px 0 20px rgba(37, 99, 235, 0.2), /* Hint of Blue */
-    inset -10px -10px 20px rgba(236, 72, 153, 0.2); /* Hint of Pink */
+    inset 10px 0 20px rgba(37, 99, 235, 0.2), 
+    inset -10px -10px 20px rgba(236, 72, 153, 0.2); 
     
-  backdrop-filter: blur(2px); /* Distorts content behind it */
+  backdrop-filter: blur(2px); 
   transition: all 0.5s ease;
 }
 
-/* --- DARK MODE BUBBLE ADJUSTMENTS --- */
-/* FIXING THE "RUBBERY" LOOK:
-   Rubber looks solid. Soap bubbles look clear.
-   In dark mode, we remove the milky fill and rely purely on reflections.
-*/
 [data-theme="dark"] .bubble {
-  /* Remove drop shadow (doesn't work on dark bg) */
   filter: none;
   
-  /* BACKGROUND: Drastically reduced opacity. 
-     Just a tiny, sharp highlight. No milky wash. 
-  */
   background: 
     radial-gradient(
       80% 80% at 25% 25%, 
       rgba(255, 255, 255, 0.6) 0%, 
-      rgba(255, 255, 255, 0.0) 20% /* Fades to zero immediately */
+      rgba(255, 255, 255, 0.0) 20% 
     );
 
-  /* BORDER: Thinner and more transparent */
   border: 1px solid rgba(255, 255, 255, 0.2);
   
-  /* SHADOW: This does the heavy lifting.
-     It creates the "Oil on Water" rainbow effect on the dark background.
-  */
   box-shadow: 
     inset 0 0 10px rgba(255, 255, 255, 0.05),
-    inset 5px 0 15px rgba(0, 255, 255, 0.2), /* Cyan Rim */
-    inset -5px -10px 15px rgba(255, 0, 255, 0.2); /* Magenta Rim */
+    inset 5px 0 15px rgba(0, 255, 255, 0.2), 
+    inset -5px -10px 15px rgba(255, 0, 255, 0.2); 
     
   opacity: 0.8;
 }
 
-/* POSITIONS */
 .b1 { width: 200px; height: 200px; top: -50px; left: -40px; opacity: 0.6; }
 .b2 { width: 80px; height: 80px; top: 40px; left: 40%; opacity: 0.8; }
 .b3 { width: 160px; height: 160px; top: 100px; left: 55%; opacity: 0.7; }
@@ -232,7 +180,7 @@ main {
   background: var(--surface);
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); /* Softer shadow */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
@@ -244,20 +192,27 @@ main {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  /* Ensure the group itself doesn't overflow */
+  width: 100%; 
 }
 
 label {
   font-weight: 600;
-  font-size: 0.75rem; /* Slightly smaller for academic feel */
+  font-size: 0.75rem; 
   letter-spacing: 0.05em;
   color: var(--text-muted);
   text-transform: uppercase;
 }
 
 input, select {
+  /* --- ADDED: width: 100% and max-width --- */
+  /* This forces the select dropdowns to stay within the boundaries of the control group */
+  width: 100%;
+  max-width: 100%;
+  
   padding: 10px;
   border: 1px solid var(--border);
-  background: var(--surface); /* Ensures inputs match theme */
+  background: var(--surface); 
   color: var(--text);
   border-radius: 6px;
   font-size: 1rem;
@@ -325,7 +280,6 @@ td {
   color: var(--text);
 }
 
-/* MERGED COLUMN (ID, Unit, Year) */
 .meta-cell {
   display: flex;
   flex-direction: column;
@@ -385,7 +339,7 @@ td {
 }
 
 .option-box {
-  background: var(--surface-highlight); /* Light gray in light mode, dark gray in dark */
+  background: var(--surface-highlight); 
   padding: 12px 16px;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -397,7 +351,6 @@ td {
   border-color: var(--primary);
 }
 
-/* Answer States */
 .option-box.correct {
   background: var(--success-bg);
   border: 2px solid var(--success-border);
